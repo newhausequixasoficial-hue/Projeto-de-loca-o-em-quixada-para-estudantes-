@@ -1,0 +1,16 @@
+Explicação:
+
+- Usuários e Perfis: Existe uma classe base (Usuario) com as informações gerais de cadastro. A partir dela, o sistema se divide em três papéis principais:
+
+--> Estudante: Busca moradias, envia comprovante de vínculo acadêmico, conversa com proprietários e avalia as acomodações.
+--> Proprietario: Cadastra imóveis, cria anúncios, conversa com estudantes e assina contratos.
+--> Administrador: Responsável por moderar a plataforma, validando documentos de estudantes/proprietários e aprovando os anúncios antes de irem ao ar.
+
+- Gestão de Imóveis e Anúncios:
+O Imovel contém as características físicas e a localização. Cada imóvel é composto por um ou mais Quartos (as unidades alugáveis com seus respectivos valores). O Anuncio funciona como a publicação do imóvel na plataforma para atração dos alunos.
+
+- Busca e Comunicação:
+O aluno utiliza um FiltroBusca para pesquisar moradias por preço, localização e estilo de vida. A comunicação direta entre estudante e proprietário é feita por meio do sistema de Mensagem.
+
+- Contratos e Avaliações:
+O ContratoLocacao formaliza o aluguel digitalmente de um quarto entre o estudante e o proprietário. A avaliacao permite que alunos e proprietários dêem notas e comentários uns aos outros após a experiência, construindo a reputação dos usuários.
