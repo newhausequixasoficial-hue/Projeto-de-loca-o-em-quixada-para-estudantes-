@@ -1,0 +1,11 @@
+Este diagrama detalha o processo de autorregistro do usuário no papel de Estudante:
+
+O estudante preenche seus dados básicos (nome, e-mail, senha, telefone) herdados da classe base Usuario.
+
+Em seguida, fornece os atributos específicos de estudante: matricula, universidade, comprovanteVinculo (upload de arquivo) e define se o seu perfilEhDividida é verdadeiro ou falso.
+
+O sistema valida localmente o formato das informações (verificação de campos obrigatórios e sintaxe do e-mail).
+
+O backend verifica a unicidade do e-mail/matrícula no banco de dados e aplica o hashing seguro da senha via BCrypt/Argon2id (atendendo ao RNF001).
+
+O registro do estudante é salvo com o status inicial de vínculo como "Pendente de Validação", aguardando a análise documental por parte do administrador.
