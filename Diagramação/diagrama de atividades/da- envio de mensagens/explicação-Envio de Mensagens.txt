@@ -1,0 +1,11 @@
+Este diagrama modela a troca de comunicação direta entre o Estudante e o Proprietario através da entidade Mensagem:
+
+O Estudante navega por um Anuncio ou Imovel de seu interesse e clica em "Enviar Mensagem".
+
+O sistema verifica o estado da sessão e se a conta do usuário está ativa e validada.
+
+O remetente digita o conteudo da conversa e confirma o envio (invocando a operação enviar()).
+
+O backend instancia o objeto Mensagem, preenchendo automaticamente idMensagem, conteudo, dataHoraEnvio e definindo o campo boolean lido como false.
+
+A mensagem é persistida criptografada no banco e enviada em tempo real (via WebSocket ou Server-Sent Events) para a caixa de entrada do destinatário.
