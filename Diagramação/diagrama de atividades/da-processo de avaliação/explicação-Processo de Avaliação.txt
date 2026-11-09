@@ -1,0 +1,13 @@
+Este diagrama ilustra o fluxo de feedback mútuo onde a entidade Avaliacao é gerada após a experiência de locação:
+
+O sistema verifica a existência prévia de um ContratoLocacao finalizado ou ativo entre o Estudante e o Proprietario.
+
+O avaliador acessa o módulo de avaliações e seleciona a contraparte (Estudante avalia Proprietário/Imóvel ou vice-versa).
+
+O usuário fornece uma nota (valor numérico, ex: 1 a 5) e um comentario explicativo.
+
+O sistema valida se a nota está dentro da faixa permitida.
+
+Ao confirmar, o método avaliar() é executado: a nova Avaliacao é salva com a dataAvaliacao atual.
+
+A plataforma recalcula a média geral de nota no perfil do destinatário ou no anúncio do imóvel para manter a reputação atualizada no catálogo.
