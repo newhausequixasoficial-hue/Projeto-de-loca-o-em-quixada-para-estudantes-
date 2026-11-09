@@ -1,0 +1,13 @@
+Este diagrama descreve o fluxo de moderação executado pela classe Administrador para homologar o acesso do estudante na plataforma:
+
+O Administrador realiza o login no painel de gestão utilizando seu codigoFuncional.
+
+O sistema lista todas as pendências de estudantes (executando o método validarVinculoEstudante()).
+
+O administrador seleciona um estudante da fila e inspeciona o documento comprovanteVinculo enviado.
+
+É tomada uma decisão de negócio:
+
+Aprovado: O status do comprovante muda para "Aprovado", liberando o estudante para enviar mensagens, agendar visitas ou firmar contratos.
+
+Rejeitado: O administrador insere uma justificativa de rejeição. O status é atualizado para "Rejeitado" e um e-mail é disparado ao estudante para reenvio.
