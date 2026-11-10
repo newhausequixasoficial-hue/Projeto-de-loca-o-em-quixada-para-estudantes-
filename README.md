@@ -5,7 +5,7 @@ Protótipo interativo de alta fidelidade e documentação técnica desenvolvida 
 ---
 
 ## 🔗 Link do Protótipo Navegável Ao Vivo
-👉 **[Acessar Protótipo Interativo no GitHub Pages](https://seu-usuario.github.io/newhaus-quixada-prototipo/)**
+👉 **[Acessar Protótipo Interativo no GitHub Pages](https://SEU_USUARIO.github.io/NOME_DO_REPOSITORIO/prototipo/)**
 
 ---
 
