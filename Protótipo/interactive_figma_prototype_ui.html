@@ -1,0 +1,746 @@
+<!DOCTYPE html>
+<html lang="pt-BR" class="dark">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>NewHaus Quixadá - Protótipo Interativo de Alta Fidelidade</title>
+    <!-- Tailwind CSS CDN -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <!-- FontAwesome for iconography -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <script>
+        tailwind.config = {
+            darkMode: 'class',
+            theme: {
+                extend: {
+                    colors: {
+                        slate: {
+                            850: '#151F32',
+                            900: '#0F172A',
+                            800: '#1E293B',
+                            700: '#334155'
+                        },
+                        brand: {
+                            500: '#2563EB',
+                            600: '#1D4ED8',
+                            400: '#60A5FA'
+                        }
+                    }
+                }
+            }
+        }
+    </script>
+    <style>
+        /* Custom scrollbar & crisp UI rendering */
+        ::-webkit-scrollbar { width: 6px; height: 6px; }
+        ::-webkit-scrollbar-track { background: #0F172A; }
+        ::-webkit-scrollbar-thumb { background: #334155; border-radius: 4px; }
+        ::-webkit-scrollbar-thumb:hover { background: #475569; }
+        .grid-bg {
+            background-image: radial-gradient(rgba(51, 65, 85, 0.3) 1px, transparent 0);
+            background-size: 24px 24px;
+        }
+    </style>
+</head>
+<body class="bg-slate-900 text-slate-50 font-sans antialiased min-h-screen flex flex-col grid-bg selection:bg-brand-500 selection:text-white">
+
+    <!-- TOP GLOBAL PROTOTYPE BAR (Simulating Figma Prototype Viewer Mode) -->
+    <header class="bg-slate-950 border-b border-slate-800 px-4 py-2 flex flex-wrap items-center justify-between text-xs text-slate-400 z-50 sticky top-0">
+        <div class="flex items-center space-x-3">
+            <span class="flex h-2.5 w-2.5 relative">
+              <span class="animate-ping absolute inline-flex h-full w-full rounded-full bg-emerald-400 opacity-75"></span>
+              <span class="relative inline-flex rounded-full h-2.5 w-2.5 bg-emerald-500"></span>
+            </span>
+            <span class="font-bold text-slate-200 uppercase tracking-wider">NewHaus Figma Interactive Viewer</span>
+            <span class="px-2 py-0.5 rounded bg-brand-500/20 text-brand-400 font-mono text-[10px] border border-brand-500/30">WCAG AA Verified</span>
+        </div>
+        
+        <!-- Viewport & Role Switcher -->
+        <div class="flex items-center space-x-2 my-1 sm:my-0">
+            <span class="text-slate-500">Simular Perfil:</span>
+            <button onclick="switchRole('estudante')" id="btn-role-estudante" class="px-2.5 py-1 rounded-md text-xs font-semibold bg-brand-500 text-white transition-all">
+                <i class="fa-solid fa-graduation-cap mr-1"></i> Estudante (Mobile-First)
+            </button>
+            <button onclick="switchRole('proprietario')" id="btn-role-proprietario" class="px-2.5 py-1 rounded-md text-xs font-semibold bg-slate-800 hover:bg-slate-700 text-slate-300 transition-all">
+                <i class="fa-solid fa-house-user mr-1"></i> Proprietário (Desktop)
+            </button>
+            <button onclick="switchRole('admin')" id="btn-role-admin" class="px-2.5 py-1 rounded-md text-xs font-semibold bg-slate-800 hover:bg-slate-700 text-slate-300 transition-all">
+                <i class="fa-solid fa-user-shield mr-1"></i> Moderação (ADM)
+            </button>
+        </div>
+
+        <div class="hidden lg:flex items-center space-x-3">
+            <span class="text-slate-500"><i class="fa-solid fa-bolt text-amber-400 mr-1"></i>SLA: <span id="performance-timer" class="text-emerald-400 font-mono">0.18s (RNF003 OK)</span></span>
+        </div>
+    </header>
+
+    <!-- MAIN APP CANVAS CONTAINER -->
+    <main class="flex-1 flex justify-center items-center p-2 sm:p-6 overflow-x-hidden">
+        
+        <!-- MOBILE VIEWPORT CONTAINER (FOR STUDENT ROLE) -->
+        <div id="mobile-frame" class="w-full max-w-[420px] bg-slate-900 border-4 border-slate-800 rounded-[36px] shadow-2xl flex flex-col overflow-hidden min-h-[780px] max-h-[880px] relative transition-all duration-300">
+            
+            <!-- Mobile Top Bar Notch simulation -->
+            <div class="bg-slate-950 text-slate-400 px-6 pt-3 pb-2 flex justify-between items-center text-xs border-b border-slate-850">
+                <span class="font-semibold text-slate-200">09:41</span>
+                <div class="flex items-center space-x-1.5 text-[10px]">
+                    <i class="fa-solid fa-signal"></i>
+                    <i class="fa-solid fa-wifi"></i>
+                    <i class="fa-solid fa-battery-full text-emerald-400"></i>
+                </div>
+            </div>
+
+            <!-- Header App Navigation -->
+            <div class="bg-slate-850 p-4 border-b border-slate-800 flex justify-between items-center">
+                <div class="flex items-center space-x-2">
+                    <div class="w-8 h-8 rounded-lg bg-brand-500 flex items-center justify-center font-black text-white text-lg shadow-lg shadow-brand-500/30">
+                        N
+                    </div>
+                    <div>
+                        <h1 class="font-bold text-sm text-slate-100 leading-none">NewHaus</h1>
+                        <span class="text-[10px] text-slate-400 font-medium">Quixadá • Moradia Estudantil</span>
+                    </div>
+                </div>
+                <div class="flex items-center space-x-2">
+                    <button onclick="toggleModal('modal-lgpd')" class="p-1.5 text-slate-400 hover:text-emerald-400 text-xs bg-slate-800 rounded-lg border border-slate-700" title="Verificar Segurança RNF001">
+                        <i class="fa-solid fa-shield-halved text-emerald-400"></i> TLS 1.3
+                    </button>
+                    <button onclick="switchScreen('notificacoes')" class="relative p-2 text-slate-300 hover:text-white bg-slate-800 rounded-lg border border-slate-700">
+                        <i class="fa-solid fa-bell text-xs"></i>
+                        <span class="absolute -top-1 -right-1 w-2.5 h-2.5 bg-brand-500 rounded-full animate-pulse"></span>
+                    </button>
+                </div>
+            </div>
+
+            <!-- DYNAMIC SCREEN CONTENT CONTAINER (STUDENT VIEWS) -->
+            <div id="student-viewport" class="flex-1 overflow-y-auto p-4 space-y-4">
+
+                <!-- 1. TELA HOME / CATÁLOGO DE IMÓVEIS (RNF002: 3 Cliques) -->
+                <div id="screen-catalogo" class="space-y-4 animate-fadeIn">
+                    <!-- Quick Search Header -->
+                    <div class="bg-slate-800 p-3 rounded-xl border border-slate-700 shadow-sm">
+                        <div class="flex items-center space-x-2 bg-slate-900 px-3 py-2 rounded-lg border border-slate-700">
+                            <i class="fa-solid fa-magnifying-glass text-slate-400 text-sm"></i>
+                            <input type="text" placeholder="Buscar por bairro, condomínio ou rua..." class="bg-transparent border-none text-xs text-slate-100 focus:outline-none w-full">
+                        </div>
+                    </div>
+
+                    <!-- VALUE OBJECT: FiltroBusca Bar -->
+                    <div>
+                        <div class="flex justify-between items-center mb-2">
+                            <span class="text-xs font-semibold text-slate-300 uppercase tracking-wider">FiltroBusca (ValueObject)</span>
+                            <span class="text-[11px] text-brand-400 font-medium cursor-pointer" onclick="resetFilters()">Limpar</span>
+                        </div>
+                        <div class="flex space-x-2 overflow-x-auto pb-1 text-xs no-scrollbar">
+                            <button onclick="filterTag(this)" class="filter-chip active px-3 py-1.5 rounded-full bg-brand-500 text-white font-medium whitespace-nowrap shadow-sm">
+                                <i class="fa-solid fa-fire text-[10px] mr-1"></i> Todos
+                            </button>
+                            <button onclick="filterTag(this)" class="filter-chip px-3 py-1.5 rounded-full bg-slate-800 border border-slate-700 text-slate-300 hover:bg-slate-700 font-medium whitespace-nowrap">
+                                <i class="fa-solid fa-dollar-sign text-emerald-400 mr-1"></i> Até R$ 600
+                            </button>
+                            <button onclick="filterTag(this)" class="filter-chip px-3 py-1.5 rounded-full bg-slate-800 border border-slate-700 text-slate-300 hover:bg-slate-700 font-medium whitespace-nowrap">
+                                <i class="fa-solid fa-graduation-cap text-amber-400 mr-1"></i> Perto da UFC
+                            </button>
+                            <button onclick="filterTag(this)" class="filter-chip px-3 py-1.5 rounded-full bg-slate-800 border border-slate-700 text-slate-300 hover:bg-slate-700 font-medium whitespace-nowrap">
+                                <i class="fa-solid fa-wifi text-brand-400 mr-1"></i> Internet Inclusa
+                            </button>
+                        </div>
+                    </div>
+
+                    <!-- Real-Time Catalog Cards -->
+                    <div class="space-y-3" id="property-list">
+                        <!-- Imóvel Card 1 -->
+                        <div class="bg-slate-800 border border-slate-700/80 rounded-2xl overflow-hidden shadow-lg hover:border-brand-500/50 transition-all cursor-pointer" onclick="openPropertyDetail('Residencial Universitario - Quarto 01', 'Campo Novo', 480, '4.9', '800m da UFC', 'img1')">
+                            <div class="relative h-44 bg-slate-900">
+                                <img src="https://images.unsplash.com/photo-1522708323590-d24dbb6b0267?auto=format&fit=crop&w=600&q=80" alt="Quarto Estudantil" class="w-full h-full object-cover">
+                                <span class="absolute top-3 left-3 bg-slate-900/90 backdrop-blur border border-slate-700 text-emerald-400 text-[10px] font-bold px-2.5 py-1 rounded-md">
+                                    <i class="fa-solid fa-check-circle mr-1"></i>VAGO IMEDIATO
+                                </span>
+                                <button onclick="event.stopPropagation(); toggleHeart(this)" class="absolute top-3 right-3 w-8 h-8 bg-slate-900/80 rounded-full flex items-center justify-center text-slate-400 hover:text-red-500 transition-colors">
+                                    <i class="fa-solid fa-heart text-xs"></i>
+                                </button>
+                                <div class="absolute bottom-3 left-3 bg-slate-950/80 px-2 py-0.5 rounded text-[10px] text-slate-300 font-medium">
+                                    <i class="fa-solid fa-location-dot text-brand-400 mr-1"></i>Campo Novo, Quixadá
+                                </div>
+                            </div>
+                            <div class="p-3.5 space-y-2">
+                                <div class="flex justify-between items-start">
+                                    <h3 class="font-bold text-sm text-slate-100 leading-snug">Quarto Individual Solteiro</h3>
+                                    <span class="text-emerald-400 font-extrabold text-sm">R$ 480<span class="text-[10px] text-slate-400 font-normal">/mês</span></span>
+                                </div>
+                                <p class="text-xs text-slate-400 line-clamp-1">Incluso: Água, Luz, Wi-Fi 500MB e mobília básica.</p>
+                                <div class="flex justify-between items-center text-[11px] pt-1 border-t border-slate-700/60">
+                                    <span class="text-amber-400 font-semibold"><i class="fa-solid fa-star mr-1"></i>4.9 (14 avaliações)</span>
+                                    <span class="text-slate-400"><i class="fa-solid fa-walking text-brand-400 mr-1"></i>800m da UFC</span>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Imóvel Card 2 -->
+                        <div class="bg-slate-800 border border-slate-700/80 rounded-2xl overflow-hidden shadow-lg hover:border-brand-500/50 transition-all cursor-pointer" onclick="openPropertyDetail('Suíte Estudantil com Ar', 'Alto da Bonça', 650, '4.8', '1.2km da UFC', 'img2')">
+                            <div class="relative h-44 bg-slate-900">
+                                <img src="https://images.unsplash.com/photo-1598928506311-c55ded91a20c?auto=format&fit=crop&w=600&q=80" alt="Suíte" class="w-full h-full object-cover">
+                                <span class="absolute top-3 left-3 bg-slate-900/90 backdrop-blur border border-slate-700 text-brand-400 text-[10px] font-bold px-2.5 py-1 rounded-md">
+                                    <i class="fa-solid fa-snowflake mr-1"></i>COM AR-CONDICIONADO
+                                </span>
+                                <button onclick="event.stopPropagation(); toggleHeart(this)" class="absolute top-3 right-3 w-8 h-8 bg-slate-900/80 rounded-full flex items-center justify-center text-red-500">
+                                    <i class="fa-solid fa-heart text-xs"></i>
+                                </button>
+                            </div>
+                            <div class="p-3.5 space-y-2">
+                                <div class="flex justify-between items-start">
+                                    <h3 class="font-bold text-sm text-slate-100 leading-snug">Suíte Privativa em Casa Compartilhada</h3>
+                                    <span class="text-emerald-400 font-extrabold text-sm">R$ 650<span class="text-[10px] text-slate-400 font-normal">/mês</span></span>
+                                </div>
+                                <p class="text-xs text-slate-400 line-clamp-1">Banheiro individual, garagem para moto e cozinha.</p>
+                                <div class="flex justify-between items-center text-[11px] pt-1 border-t border-slate-700/60">
+                                    <span class="text-amber-400 font-semibold"><i class="fa-solid fa-star mr-1"></i>4.8 (8 avaliações)</span>
+                                    <span class="text-slate-400"><i class="fa-solid fa-bus text-brand-400 mr-1"></i>1.2km da UFC</span>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- 2. TELA DE FAVORITOS (EVETUADA CORREÇÃO DE CONTRASTE) -->
+                <div id="screen-favoritos" class="space-y-3 hidden animate-fadeIn">
+                    <div class="flex justify-between items-center border-b border-slate-800 pb-2">
+                        <h2 class="font-bold text-sm text-slate-100"><i class="fa-solid fa-heart text-red-500 mr-2"></i>Meus Imóveis Favoritos</h2>
+                        <span class="text-xs bg-slate-800 px-2 py-0.5 rounded text-slate-300 font-mono">2 salvos</span>
+                    </div>
+
+                    <div class="bg-slate-800 border border-slate-700 rounded-xl p-3 flex space-x-3 items-center">
+                        <img src="https://images.unsplash.com/photo-1598928506311-c55ded91a20c?auto=format&fit=crop&w=200&q=80" class="w-16 h-16 rounded-lg object-cover">
+                        <div class="flex-1 min-w-0">
+                            <h4 class="font-bold text-xs text-slate-100 truncate">Suíte Estudantil com Ar</h4>
+                            <p class="text-[11px] text-slate-400">Alto da Bonça • R$ 650/mês</p>
+                            <div class="flex space-x-2 mt-1.5">
+                                <button onclick="switchScreen('chat')" class="px-2.5 py-1 bg-brand-500 text-white text-[10px] font-semibold rounded-md hover:bg-brand-600">Falar com Dono</button>
+                                <button onclick="this.parentElement.parentElement.parentElement.remove()" class="px-2 py-1 bg-slate-700 text-slate-300 text-[10px] rounded-md hover:text-red-400">Remover</button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- 3. TELA DE MENSAGENS / CHAT DIRETO -->
+                <div id="screen-chat" class="space-y-3 hidden h-full flex flex-col animate-fadeIn">
+                    <div class="bg-slate-850 p-2.5 rounded-xl border border-slate-700 flex items-center justify-between">
+                        <div class="flex items-center space-x-2">
+                            <div class="w-8 h-8 rounded-full bg-emerald-600 text-white font-bold flex items-center justify-center text-xs">JP</div>
+                            <div>
+                                <h4 class="text-xs font-bold text-slate-100">João Proprietário</h4>
+                                <span class="text-[10px] text-emerald-400"><i class="fa-solid fa-circle text-[6px] mr-1"></i>Online agora</span>
+                            </div>
+                        </div>
+                        <button onclick="openContractModal()" class="px-2.5 py-1 bg-emerald-600 text-white font-semibold text-[10px] rounded-lg shadow hover:bg-emerald-500">
+                            <i class="fa-solid fa-file-contract mr-1"></i>Solicitar Contrato
+                        </button>
+                    </div>
+
+                    <!-- Chat Messages List -->
+                    <div class="flex-1 bg-slate-950 p-3 rounded-xl border border-slate-800 space-y-2.5 overflow-y-auto text-xs min-h-[360px]">
+                        <div class="flex justify-center">
+                            <span class="bg-slate-800 text-slate-400 text-[10px] px-2 py-0.5 rounded-full">Mensagens protegidas por HTTPS TLS 1.3</span>
+                        </div>
+                        <div class="bg-slate-800 text-slate-200 p-2.5 rounded-2xl rounded-tl-none max-w-[85%] border border-slate-700">
+                            Olá! Vi que você se interessou pelo quarto no Campo Novo. Está disponível para visita hoje às 16h!
+                            <span class="block text-[9px] text-slate-400 mt-1 text-right">10:12</span>
+                        </div>
+                        <div class="bg-brand-600 text-white p-2.5 rounded-2xl rounded-tr-none max-w-[85%] ml-auto shadow">
+                            Boa tarde, João! Consigo sim. Preciso apenas confirmar se o contrato de locação digital pode ser assinado direto pelo app?
+                            <span class="block text-[9px] text-brand-200 mt-1 text-right">10:14 <i class="fa-solid fa-check-double text-emerald-300 ml-0.5"></i></span>
+                        </div>
+                    </div>
+
+                    <!-- Chat Input -->
+                    <div class="flex items-center space-x-2">
+                        <input type="text" placeholder="Digite sua mensagem..." class="flex-1 bg-slate-800 border border-slate-700 rounded-xl px-3 py-2 text-xs text-slate-100 focus:outline-none focus:border-brand-500">
+                        <button class="bg-brand-500 text-white w-9 h-9 rounded-xl flex items-center justify-center hover:bg-brand-600">
+                            <i class="fa-solid fa-paper-plane text-xs"></i>
+                        </button>
+                    </div>
+                </div>
+
+                <!-- 4. TELA DE PERFIL DO ESTUDANTE / CADASTRO DE COMPROVANTE -->
+                <div id="screen-perfil" class="space-y-3 hidden animate-fadeIn">
+                    <div class="bg-slate-800 p-4 rounded-2xl border border-slate-700 text-center space-y-2">
+                        <div class="w-16 h-16 rounded-full bg-brand-500 text-white font-extrabold text-xl flex items-center justify-center mx-auto shadow-lg shadow-brand-500/20">
+                            LC
+                        </div>
+                        <div>
+                            <h3 class="font-bold text-sm text-slate-100">Lucas Costa</h3>
+                            <p class="text-xs text-slate-400">Engenharia de Software • UFC Quixadá</p>
+                        </div>
+                        <div class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-semibold bg-emerald-500/20 text-emerald-400 border border-emerald-500/30">
+                            <i class="fa-solid fa-check-circle mr-1"></i>Estudante Validadas pelo ADM
+                        </div>
+                    </div>
+
+                    <div class="bg-slate-800 p-3.5 rounded-xl border border-slate-700 space-y-2">
+                        <h4 class="text-xs font-bold text-slate-200"><i class="fa-solid fa-id-card text-brand-400 mr-2"></i>Comprovante de Vínculo Acadêmico</h4>
+                        <div class="border-2 border-dashed border-slate-700 rounded-lg p-3 text-center bg-slate-900">
+                            <i class="fa-solid fa-file-pdf text-red-400 text-xl mb-1"></i>
+                            <p class="text-[11px] text-slate-300 font-medium">comprovante_matricula_ufc_2026.pdf</p>
+                            <span class="text-[9px] text-emerald-400 font-bold block mt-1">APROVADO PELA MODERAÇÃO</span>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- 5. TELA DETALHE DO IMÓVEL MODAL INSIDE MOBILE -->
+                <div id="screen-detalhe" class="space-y-3 hidden animate-fadeIn">
+                    <button onclick="switchScreen('catalogo')" class="text-xs text-brand-400 font-semibold mb-1"><i class="fa-solid fa-arrow-left mr-1"></i>Voltar ao Catálogo</button>
+                    <div class="bg-slate-800 border border-slate-700 rounded-2xl p-4 space-y-3">
+                        <h2 id="detalhe-titulo" class="font-bold text-base text-slate-100">Nome do Imóvel</h2>
+                        <div class="flex justify-between items-center text-xs">
+                            <span id="detalhe-bairro" class="text-slate-400">Bairro</span>
+                            <span id="detalhe-preco" class="text-emerald-400 font-black text-base">R$ 0,00</span>
+                        </div>
+
+                        <!-- Reputação & Avaliações Module -->
+                        <div class="bg-slate-900 p-3 rounded-xl border border-slate-700/80 space-y-2">
+                            <div class="flex justify-between items-center">
+                                <h4 class="text-xs font-bold text-amber-400"><i class="fa-solid fa-star mr-1"></i>4.9 Reputação do Local</h4>
+                                <button onclick="toggleModal('modal-avaliacao')" class="text-[10px] bg-brand-500 text-white px-2 py-0.5 rounded">Avaliar</button>
+                            </div>
+                            <p class="text-[11px] text-slate-300 italic">"Excelente localização para quem cursa no campus de Quixadá. Internet sempre estável."</p>
+                            <span class="text-[9px] text-slate-500 block text-right">— Matheus (Eng. de Computação)</span>
+                        </div>
+
+                        <button onclick="switchScreen('chat')" class="w-full py-2.5 bg-emerald-600 hover:bg-emerald-500 text-white font-bold text-xs rounded-xl shadow-lg">
+                            <i class="fa-solid fa-comments mr-2"></i>Entrar em Contato com Proprietário
+                        </button>
+                    </div>
+                </div>
+
+            </div>
+
+            <!-- Mobile Bottom Navigation Bar (High Contrast Accessible) -->
+            <nav id="mobile-nav" class="bg-slate-950 border-t border-slate-800 p-2 flex justify-around items-center">
+                <button onclick="switchScreen('catalogo')" id="nav-catalogo" class="nav-item active flex flex-col items-center text-brand-400 font-bold">
+                    <i class="fa-solid fa-house text-base"></i>
+                    <span class="text-[10px] mt-0.5">Catálogo</span>
+                </button>
+                <button onclick="switchScreen('favoritos')" id="nav-favoritos" class="nav-item flex flex-col items-center text-slate-400 hover:text-slate-200">
+                    <i class="fa-solid fa-heart text-base"></i>
+                    <span class="text-[10px] mt-0.5">Favoritos</span>
+                </button>
+                <button onclick="switchScreen('chat')" id="nav-chat" class="nav-item flex flex-col items-center text-slate-400 hover:text-slate-200 relative">
+                    <i class="fa-solid fa-comments text-base"></i>
+                    <span class="text-[10px] mt-0.5">Chat</span>
+                    <span class="absolute top-0 right-3 w-2 h-2 bg-brand-500 rounded-full"></span>
+                </button>
+                <button onclick="switchScreen('perfil')" id="nav-perfil" class="nav-item flex flex-col items-center text-slate-400 hover:text-slate-200">
+                    <i class="fa-solid fa-user text-base"></i>
+                    <span class="text-[10px] mt-0.5">Perfil</span>
+                </button>
+            </nav>
+        </div>
+
+
+        <!-- DESKTOP CONTAINER (FOR PROPRIETARIO & ADMIN ROLES) -->
+        <div id="desktop-frame" class="hidden w-full max-w-6xl bg-slate-900 border border-slate-800 rounded-2xl shadow-2xl flex flex-col overflow-hidden min-h-[760px] animate-fadeIn">
+            
+            <!-- Desktop Navbar -->
+            <div class="bg-slate-850 px-6 py-3 border-b border-slate-800 flex justify-between items-center">
+                <div class="flex items-center space-x-3">
+                    <div class="w-9 h-9 rounded-xl bg-brand-500 flex items-center justify-center font-black text-white text-xl shadow-lg">
+                        N
+                    </div>
+                    <div>
+                        <h1 class="font-extrabold text-base text-slate-100">NewHaus Web Dashboard</h1>
+                        <span id="desktop-role-title" class="text-xs text-brand-400 font-medium">Visão do Proprietário</span>
+                    </div>
+                </div>
+
+                <!-- Desktop Role Tabs -->
+                <div class="flex items-center space-x-4">
+                    <div id="proprietario-menu" class="flex space-x-2">
+                        <button onclick="switchDesktopTab('imoveis')" class="px-3 py-1.5 rounded-lg text-xs font-semibold bg-slate-800 text-slate-200 border border-slate-700 hover:bg-slate-700">
+                            <i class="fa-solid fa-building-user mr-1.5"></i>Meus Imóveis & Quartos
+                        </button>
+                        <button onclick="switchDesktopTab('novo-anuncio')" class="px-3 py-1.5 rounded-lg text-xs font-semibold bg-brand-500 text-white shadow hover:bg-brand-600">
+                            <i class="fa-solid fa-plus mr-1.5"></i>Criar Novo Anúncio
+                        </button>
+                    </div>
+
+                    <div id="admin-menu" class="hidden flex space-x-2">
+                        <button onclick="switchDesktopTab('moderacao-docs')" class="px-3 py-1.5 rounded-lg text-xs font-semibold bg-amber-500/20 text-amber-300 border border-amber-500/30">
+                            <i class="fa-solid fa-clock mr-1.5"></i>Documentos Pendentes (1)
+                        </button>
+                        <button onclick="switchDesktopTab('moderacao-anuncios')" class="px-3 py-1.5 rounded-lg text-xs font-semibold bg-brand-500/20 text-brand-300 border border-brand-500/30">
+                            <i class="fa-solid fa-bullhorn mr-1.5"></i>Anúncios para Aprovar (2)
+                        </button>
+                    </div>
+                </div>
+            </div>
+
+            <!-- DESKTOP VIEWPORT CONTENT AREA -->
+            <div class="flex-1 p-6 overflow-y-auto bg-slate-900">
+                
+                <!-- 1. TAB: PROPRIETÁRIO - GERENCIAMENTO DE IMÓVEIS E QUARTOS -->
+                <div id="desktop-tab-imoveis" class="space-y-6">
+                    <!-- KPI Cards -->
+                    <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
+                        <div class="bg-slate-800 p-4 rounded-xl border border-slate-700">
+                            <span class="text-xs text-slate-400 font-medium">Total de Imóveis Cadastrados</span>
+                            <div class="flex justify-between items-center mt-2">
+                                <span class="text-2xl font-black text-slate-100">3 Imóveis</span>
+                                <i class="fa-solid fa-city text-brand-400 text-xl"></i>
+                            </div>
+                        </div>
+                        <div class="bg-slate-800 p-4 rounded-xl border border-slate-700">
+                            <span class="text-xs text-slate-400 font-medium">Quartos Alugados</span>
+                            <div class="flex justify-between items-center mt-2">
+                                <span class="text-2xl font-black text-emerald-400">7 / 10</span>
+                                <i class="fa-solid fa-door-open text-emerald-400 text-xl"></i>
+                            </div>
+                        </div>
+                        <div class="bg-slate-800 p-4 rounded-xl border border-slate-700">
+                            <span class="text-xs text-slate-400 font-medium">Receita Mensal Estimada</span>
+                            <div class="flex justify-between items-center mt-2">
+                                <span class="text-2xl font-black text-slate-100">R$ 4.350,00</span>
+                                <i class="fa-solid fa-wallet text-amber-400 text-xl"></i>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Properties Data Table -->
+                    <div class="bg-slate-800 border border-slate-700 rounded-xl overflow-hidden shadow-xl">
+                        <div class="p-4 border-b border-slate-700 flex justify-between items-center">
+                            <h3 class="font-bold text-sm text-slate-100">Listagem de Imóveis e Status do Anúncio</h3>
+                            <span class="text-xs text-slate-400">Total: 3 propriedades</span>
+                        </div>
+                        <table class="w-full text-left text-xs text-slate-300">
+                            <thead class="bg-slate-850 text-slate-400 uppercase text-[10px] tracking-wider border-b border-slate-700">
+                                <tr>
+                                    <th class="p-3.5">Imóvel / Bairro</th>
+                                    <th class="p-3.5">Composição (Quartos)</th>
+                                    <th class="p-3.5">Status Anúncio</th>
+                                    <th class="p-3.5">Ações</th>
+                                </tr>
+                            </thead>
+                            <tbody class="divide-y divide-slate-700/60">
+                                <tr class="hover:bg-slate-750 transition-colors">
+                                    <td class="p-3.5 font-bold text-slate-100">
+                                        Residencial Universitario
+                                        <span class="block text-[11px] font-normal text-slate-400">Campo Novo, Quixadá</span>
+                                    </td>
+                                    <td class="p-3.5">4 Quartos (3 Alugados)</td>
+                                    <td class="p-3.5">
+                                        <span class="px-2.5 py-1 rounded-full text-[10px] font-bold bg-emerald-500/20 text-emerald-400 border border-emerald-500/30">
+                                            <i class="fa-solid fa-check mr-1"></i>APROVADO E ATIVO
+                                        </span>
+                                    </td>
+                                    <td class="p-3.5 space-x-2">
+                                        <button class="text-brand-400 hover:underline font-semibold">Editar</button>
+                                        <button class="text-slate-400 hover:text-slate-200">Gerenciar Quartos</button>
+                                    </td>
+                                </tr>
+                                <tr class="hover:bg-slate-750 transition-colors">
+                                    <td class="p-3.5 font-bold text-slate-100">
+                                        Casa Estudantil Serra Azul
+                                        <span class="block text-[11px] font-normal text-slate-400">Alto da Bonça, Quixadá</span>
+                                    </td>
+                                    <td class="p-3.5">2 Suítes Privativas</td>
+                                    <td class="p-3.5">
+                                        <span class="px-2.5 py-1 rounded-full text-[10px] font-bold bg-amber-500/20 text-amber-300 border border-amber-500/30">
+                                            <i class="fa-solid fa-hourglass-start mr-1"></i>EM ANÁLISE ADM
+                                        </span>
+                                    </td>
+                                    <td class="p-3.5 space-x-2">
+                                        <button class="text-brand-400 hover:underline font-semibold">Ver Rascunho</button>
+                                    </td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+
+                <!-- 2. TAB: PROPRIETÁRIO - CRIAR ANÚNCIO E CADASTRO DE QUARTOS -->
+                <div id="desktop-tab-novo-anuncio" class="hidden space-y-4 max-w-3xl mx-auto bg-slate-800 p-6 rounded-2xl border border-slate-700 shadow-xl">
+                    <h2 class="font-bold text-base text-slate-100 border-b border-slate-700 pb-3">Cadastrar Novo Imóvel e Composição de Quartos</h2>
+                    
+                    <form onsubmit="event.preventDefault(); alert('Anuncio submetido para validação do Administrador!'); switchDesktopTab('imoveis');" class="space-y-4 text-xs">
+                        <div class="grid grid-cols-2 gap-4">
+                            <div>
+                                <label class="block font-medium text-slate-300 mb-1">Título do Anúncio</label>
+                                <input type="text" required placeholder="Ex: Moradia Estudantil Próxima ao Campus" class="w-full bg-slate-900 border border-slate-700 rounded-lg px-3 py-2 text-slate-100 focus:outline-none focus:border-brand-500">
+                            </div>
+                            <div>
+                                <label class="block font-medium text-slate-300 mb-1">Bairro em Quixadá</label>
+                                <input type="text" required placeholder="Ex: Campo Novo" class="w-full bg-slate-900 border border-slate-700 rounded-lg px-3 py-2 text-slate-100 focus:outline-none focus:border-brand-500">
+                            </div>
+                        </div>
+
+                        <!-- Composição: Quarto Entity Subform -->
+                        <div class="bg-slate-900 p-4 rounded-xl border border-slate-700/80 space-y-3">
+                            <h4 class="font-bold text-slate-200 text-xs flex items-center justify-between">
+                                <span><i class="fa-solid fa-bed text-brand-400 mr-2"></i>Composição do Imóvel (Entidade Quarto)</span>
+                                <button type="button" class="text-[11px] text-brand-400 hover:underline">+ Adicionar Outro Quarto</button>
+                            </h4>
+                            <div class="grid grid-cols-3 gap-3 bg-slate-850 p-3 rounded-lg border border-slate-750">
+                                <div>
+                                    <span class="text-[10px] text-slate-400">Identificador / Número</span>
+                                    <input type="text" value="Quarto 01 (Suíte)" class="w-full bg-slate-900 border border-slate-700 rounded px-2 py-1 text-slate-100">
+                                </div>
+                                <div>
+                                    <span class="text-[10px] text-slate-400">Valor Mensal (R$)</span>
+                                    <input type="number" value="550" class="w-full bg-slate-900 border border-slate-700 rounded px-2 py-1 text-slate-100">
+                                </div>
+                                <div>
+                                    <span class="text-[10px] text-slate-400">Status Inicial</span>
+                                    <select class="w-full bg-slate-900 border border-slate-700 rounded px-2 py-1 text-slate-100">
+                                        <option>Disponível</option>
+                                        <option>Indisponível</option>
+                                    </select>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="flex justify-end space-x-3 pt-2">
+                            <button type="button" onclick="switchDesktopTab('imoveis')" class="px-4 py-2 bg-slate-700 text-slate-200 font-semibold rounded-lg">Cancelar</button>
+                            <button type="submit" class="px-5 py-2 bg-brand-500 text-white font-bold rounded-lg shadow-lg hover:bg-brand-600">Submeter Anúncio para ADM</button>
+                        </div>
+                    </form>
+                </div>
+
+                <!-- 3. TAB: MODERAÇÃO ADMIN (VALIDAR DOCUMENTOS & ANÚNCIOS) -->
+                <div id="desktop-tab-moderacao-docs" class="hidden space-y-4">
+                    <div class="bg-slate-800 p-4 rounded-xl border border-slate-700 space-y-3">
+                        <h3 class="font-bold text-sm text-amber-400 flex items-center">
+                            <i class="fa-solid fa-user-check mr-2"></i>Validação de Comprovante Acadêmico (Administrador)
+                        </h3>
+                        <p class="text-xs text-slate-300">Analise a autenticidade do documento de estudante cadastrado antes de liberar o acesso total ao chat.</p>
+
+                        <div class="bg-slate-900 p-4 rounded-xl border border-slate-700 flex justify-between items-center text-xs">
+                            <div class="space-y-1">
+                                <span class="font-bold text-slate-100">Estudante: Mariana Souza</span>
+                                <span class="block text-slate-400">Matrícula UFC: 493821 • Engenharia de Computação</span>
+                                <a href="#" onclick="alert('Abrindo visualizador seguro de PDF...')" class="text-brand-400 hover:underline font-mono text-[11px]"><i class="fa-solid fa-file-pdf mr-1"></i>Ver comprovante_matricula_mariana.pdf</a>
+                            </div>
+                            <div class="flex space-x-2">
+                                <button onclick="alert('Vínculo aprovado com sucesso!'); this.parentElement.parentElement.remove()" class="px-3 py-1.5 bg-emerald-600 text-white font-bold rounded-lg hover:bg-emerald-500">
+                                    <i class="fa-solid fa-check mr-1"></i>Aprovar Estudante
+                                </button>
+                                <button onclick="alert('Solicitada correção de comprovante ao aluno.'); this.parentElement.parentElement.remove()" class="px-3 py-1.5 bg-red-600/80 text-white font-bold rounded-lg hover:bg-red-500">
+                                    <i class="fa-solid fa-xmark mr-1"></i>Rejeitar
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+            </div>
+        </div>
+
+    </main>
+
+    <!-- MODAL 1: SEGURANÇA E LGPD (RNF001 EVIDÊNCIA) -->
+    <div id="modal-lgpd" class="fixed inset-0 bg-slate-950/80 backdrop-blur-sm hidden items-center justify-center p-4 z-50">
+        <div class="bg-slate-850 border border-slate-700 rounded-2xl max-w-md w-full p-5 space-y-4 shadow-2xl">
+            <div class="flex justify-between items-center border-b border-slate-700 pb-2">
+                <h3 class="font-bold text-sm text-emerald-400 flex items-center">
+                    <i class="fa-solid fa-shield-halved mr-2"></i>Auditoria RNF001 - Segurança & LGPD
+                </h3>
+                <button onclick="toggleModal('modal-lgpd')" class="text-slate-400 hover:text-white"><i class="fa-solid fa-xmark"></i></button>
+            </div>
+            <ul class="text-xs space-y-2 text-slate-300">
+                <li class="flex items-start"><i class="fa-solid fa-check text-emerald-400 mt-0.5 mr-2"></i><span>Tráfego seguro forçado via <strong>HTTPS com suporte a TLS 1.3</strong>.</span></li>
+                <li class="flex items-start"><i class="fa-solid fa-check text-emerald-400 mt-0.5 mr-2"></i><span>Armazenamento de senhas via algoritmo <strong>Argon2id / BCrypt</strong>.</span></li>
+                <li class="flex items-start"><i class="fa-solid fa-check text-emerald-400 mt-0.5 mr-2"></i><span>Criptografia de dados de documentos pessoais em repouso conforme a LGPD.</span></li>
+            </ul>
+            <button onclick="toggleModal('modal-lgpd')" class="w-full py-2 bg-slate-700 hover:bg-slate-600 text-white font-bold text-xs rounded-xl">Fechar Auditoria</button>
+        </div>
+    </div>
+
+    <!-- MODAL 2: ASSINATURA DE CONTRATO DE LOCAÇÃO DIGITAL -->
+    <div id="modal-contrato" class="fixed inset-0 bg-slate-950/80 backdrop-blur-sm hidden items-center justify-center p-4 z-50">
+        <div class="bg-slate-850 border border-slate-700 rounded-2xl max-w-lg w-full p-5 space-y-4 shadow-2xl max-h-[90vh] overflow-y-auto">
+            <div class="flex justify-between items-center border-b border-slate-700 pb-2">
+                <h3 class="font-bold text-sm text-slate-100 flex items-center">
+                    <i class="fa-solid fa-file-signature text-brand-400 mr-2"></i>ContratoLocacao - Assinatura Digital
+                </h3>
+                <button onclick="toggleModal('modal-contrato')" class="text-slate-400 hover:text-white"><i class="fa-solid fa-xmark"></i></button>
+            </div>
+            
+            <div class="bg-slate-950 p-4 rounded-xl border border-slate-800 text-[11px] font-mono text-slate-300 space-y-2 leading-relaxed">
+                <p class="font-bold text-slate-100 uppercase">Instrumento Particular de Locação Estudantil</p>
+                <p><strong>LOCADOR:</strong> João Proprietário (Cadastrado e Validado)</p>
+                <p><strong>LOCATÁRIO:</strong> Lucas Costa (Estudante UFC Quixadá)</p>
+                <p><strong>OBJETO:</strong> Aluguel do Quarto 01 no Residencial Universitario, Bairro Campo Novo, Quixadá-CE.</p>
+                <p><strong>VALOR MENSAL:</strong> R$ 480,00 com vencimento todo dia 10.</p>
+            </div>
+
+            <div class="space-y-2">
+                <label class="block text-xs text-slate-300 font-medium">Digite seu nome completo para assinar digitalmente:</label>
+                <input type="text" id="input-assinatura" placeholder="Lucas Costa" class="w-full bg-slate-900 border border-slate-700 rounded-lg px-3 py-2 text-xs text-slate-100">
+            </div>
+
+            <button onclick="assinarContrato()" class="w-full py-2.5 bg-emerald-600 hover:bg-emerald-500 text-white font-bold text-xs rounded-xl shadow-lg">
+                <i class="fa-solid fa-pen-nib mr-1"></i>Assinar Contrato Digitalmente
+            </button>
+        </div>
+    </div>
+
+    <!-- MODAL 3: AVALIAÇÃO DE LOCAL/PROPRIETÁRIO -->
+    <div id="modal-avaliacao" class="fixed inset-0 bg-slate-950/80 backdrop-blur-sm hidden items-center justify-center p-4 z-50">
+        <div class="bg-slate-850 border border-slate-700 rounded-2xl max-w-md w-full p-5 space-y-4 shadow-2xl">
+            <div class="flex justify-between items-center border-b border-slate-700 pb-2">
+                <h3 class="font-bold text-sm text-amber-400 flex items-center">
+                    <i class="fa-solid fa-star mr-2"></i>Emitir Avaliacao (Pós-Locação)
+                </h3>
+                <button onclick="toggleModal('modal-avaliacao')" class="text-slate-400 hover:text-white"><i class="fa-solid fa-xmark"></i></button>
+            </div>
+            
+            <div class="text-center space-y-2">
+                <span class="text-xs text-slate-300">Selecione a nota de 1 a 5 estrelas:</span>
+                <div class="flex justify-center space-x-2 text-xl text-amber-400 cursor-pointer">
+                    <i class="fa-solid fa-star"></i>
+                    <i class="fa-solid fa-star"></i>
+                    <i class="fa-solid fa-star"></i>
+                    <i class="fa-solid fa-star"></i>
+                    <i class="fa-solid fa-star"></i>
+                </div>
+            </div>
+
+            <textarea placeholder="Escreva um comentário sobre a infraestrutura e o proprietário..." class="w-full bg-slate-900 border border-slate-700 rounded-lg p-2.5 text-xs text-slate-100 h-24 focus:outline-none focus:border-brand-500"></textarea>
+
+            <button onclick="alert('Avaliação registrada! A média de reputação foi atualizada no catálogo.'); toggleModal('modal-avaliacao');" class="w-full py-2.5 bg-brand-500 hover:bg-brand-600 text-white font-bold text-xs rounded-xl">
+                Enviar Avaliação
+            </button>
+        </div>
+    </div>
+
+    <!-- JAVASCRIPT LOGIC & PROTOTYPE NAVIGATION ENGINE -->
+    <script>
+        // Switch between User Roles
+        function switchRole(role) {
+            const mobileFrame = document.getElementById('mobile-frame');
+            const desktopFrame = document.getElementById('desktop-frame');
+            const btnEstudante = document.getElementById('btn-role-estudante');
+            const btnProprietario = document.getElementById('btn-role-proprietario');
+            const btnAdmin = document.getElementById('btn-role-admin');
+            
+            const desktopRoleTitle = document.getElementById('desktop-role-title');
+            const proprietarioMenu = document.getElementById('proprietario-menu');
+            const adminMenu = document.getElementById('admin-menu');
+
+            // Reset buttons style
+            [btnEstudante, btnProprietario, btnAdmin].forEach(btn => {
+                btn.className = "px-2.5 py-1 rounded-md text-xs font-semibold bg-slate-800 hover:bg-slate-700 text-slate-300 transition-all";
+            });
+
+            if (role === 'estudante') {
+                mobileFrame.classList.remove('hidden');
+                desktopFrame.classList.add('hidden');
+                btnEstudante.className = "px-2.5 py-1 rounded-md text-xs font-semibold bg-brand-500 text-white transition-all";
+            } else if (role === 'proprietario') {
+                mobileFrame.classList.add('hidden');
+                desktopFrame.classList.remove('hidden');
+                btnProprietario.className = "px-2.5 py-1 rounded-md text-xs font-semibold bg-brand-500 text-white transition-all";
+                desktopRoleTitle.innerText = "Visão do Proprietário (Gerenciamento & Anúncios)";
+                proprietarioMenu.classList.remove('hidden');
+                adminMenu.classList.add('hidden');
+                switchDesktopTab('imoveis');
+            } else if (role === 'admin') {
+                mobileFrame.classList.add('hidden');
+                desktopFrame.classList.remove('hidden');
+                btnAdmin.className = "px-2.5 py-1 rounded-md text-xs font-semibold bg-amber-500 text-slate-950 font-bold transition-all";
+                desktopRoleTitle.innerText = "Visão do Administrador (Moderação de Cadastros e Anúncios)";
+                proprietarioMenu.classList.add('hidden');
+                adminMenu.classList.remove('hidden');
+                switchDesktopTab('moderacao-docs');
+            }
+        }
+
+        // Mobile Screen Navigation engine (RNF002 Usability)
+        function switchScreen(screenName) {
+            const screens = ['catalogo', 'favoritos', 'chat', 'perfil', 'detalhe'];
+            screens.forEach(s => {
+                const el = document.getElementById(`screen-${s}`);
+                if (el) el.classList.add('hidden');
+            });
+
+            const activeScreen = document.getElementById(`screen-${screenName}`);
+            if (activeScreen) activeScreen.classList.remove('hidden');
+
+            // Update mobile bottom nav highlights
+            const navItems = document.querySelectorAll('.nav-item');
+            navItems.forEach(item => {
+                item.classList.remove('text-brand-400', 'font-bold');
+                item.classList.add('text-slate-400');
+            });
+
+            const activeNav = document.getElementById(`nav-${screenName}`);
+            if (activeNav) {
+                activeNav.classList.remove('text-slate-400');
+                activeNav.classList.add('text-brand-400', 'font-bold');
+            }
+        }
+
+        // Desktop Tab Switcher
+        function switchDesktopTab(tabName) {
+            const tabs = ['imoveis', 'novo-anuncio', 'moderacao-docs'];
+            tabs.forEach(t => {
+                const el = document.getElementById(`desktop-tab-${t}`);
+                if (el) el.classList.add('hidden');
+            });
+            const activeTab = document.getElementById(`desktop-tab-${tabName}`);
+            if (activeTab) activeTab.classList.remove('hidden');
+        }
+
+        // Open Property Detail View
+        function openPropertyDetail(titulo, bairro, preco, rating, dist, imgType) {
+            document.getElementById('detalhe-titulo').innerText = titulo;
+            document.getElementById('detalhe-bairro').innerText = bairro + ' • ' + dist;
+            document.getElementById('detalhe-preco').innerText = 'R$ ' + preco + '/mês';
+            switchScreen('detalhe');
+        }
+
+        // Heart Icon Toggle
+        function toggleHeart(btn) {
+            btn.classList.toggle('text-red-500');
+            btn.classList.toggle('text-slate-400');
+        }
+
+        // Modal Handler
+        function toggleModal(modalId) {
+            const modal = document.getElementById(modalId);
+            if (modal.classList.contains('hidden')) {
+                modal.classList.remove('hidden');
+                modal.classList.add('flex');
+            } else {
+                modal.classList.remove('flex');
+                modal.classList.add('hidden');
+            }
+        }
+
+        function openContractModal() {
+            toggleModal('modal-contrato');
+        }
+
+        function assinarContrato() {
+            const val = document.getElementById('input-assinatura').value;
+            if (!val) {
+                alert('Por favor, informe seu nome completo para assinar.');
+                return;
+            }
+            alert('ContratoLocacao assinado digitalmente com sucesso! Status do imóvel atualizado.');
+            toggleModal('modal-contrato');
+        }
+
+        // Filter chips interactivity
+        function filterTag(btn) {
+            document.querySelectorAll('.filter-chip').forEach(c => {
+                c.className = "filter-chip px-3 py-1.5 rounded-full bg-slate-800 border border-slate-700 text-slate-300 hover:bg-slate-700 font-medium whitespace-nowrap";
+            });
+            btn.className = "filter-chip active px-3 py-1.5 rounded-full bg-brand-500 text-white font-medium whitespace-nowrap shadow-sm";
+        }
+
+        function resetFilters() {
+            const firstChip = document.querySelector('.filter-chip');
+            if (firstChip) filterTag(firstChip);
+        }
+    </script>
+</body>
+</html>
