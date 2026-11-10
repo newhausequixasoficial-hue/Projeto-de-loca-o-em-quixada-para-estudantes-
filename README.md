@@ -5,8 +5,7 @@ Protótipo interativo de alta fidelidade e documentação técnica desenvolvida 
 ---
 
 ## 🔗 Link do Protótipo Navegável Ao Vivo
-👉 **[Acessar Protótipo Interativo no GitHub Pages](https://SEU_USUARIO.github.io/NOME_DO_REPOSITORIO/)**
-
+👉 **[Acessar Protótipo Interativo no GitHub Pages](https://newhausequixasoficial-hue.github.io/Projeto-de-loca-o-em-quixada-para-estudantes-/docs%20/figma_telas_evidencias/prototipo/)**
 ---
 
 ## 🎯 Melhorias e Correções Implementadas (Design & UX)
