@@ -10,7 +10,7 @@ Projeto desenvolvido para a disciplina de **Engenharia de Requisitos** (Universi
 
 Explore os fluxos completos de **Estudante**, **Proprietário** e **Moderação Administrativa** diretamente no protótipo interativo:
 
-👉 **[Acessar Protótipo Interativo no Figma](https://www.figma.com/proto/W5SDw7f3bQJguUdqsxnVRQ/Untitled?node-id=2-4&p=f&viewport=-13824%2C-98%2C1&t=Q1HLUkkkxsM8pMQU-1&scaling=min-zoom&content-scaling=fixed&page-id=0%3A1)**
+👉 **[Acessar Protótipo Interativo no Figma](https://www.figma.com/proto/D0fww0SYNSSFIvKk0i2imK/Untitled?node-id=2-2&p=f&viewport=641%2C474%2C0.78&t=MZHpvUrAxd8alKlZ-0&scaling=min-zoom&content-scaling=fixed&page-id=0%3A1)**
 
 ---
 
